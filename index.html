@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CaptureProof Pro — full-page screenshots with automatic redaction</title>
+<meta name="description" content="Capture a full web page, automatically flag sensitive data, black it out in one click, and export a proof report. Everything runs in your browser.">
+<link rel="icon" href="assets/favicon.png">
+<style>
+  :root{
+    --ink:#16151f; --muted:#5f5c73; --line:#e7e4f0; --bg:#fbfaff;
+    --accent:#6d28d9; --accent-2:#8b5cf6;
+    --max:1080px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       -webkit-font-smoothing:antialiased}
+  a{color:var(--accent)}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+  /* header */
+  header{position:sticky;top:0;z-index:10;background:rgba(251,250,255,.86);
+         backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;align-items:center;gap:12px;height:64px}
+  header img{width:28px;height:28px}
+  header b{font-size:17px;letter-spacing:-.2px}
+  header nav{margin-left:auto;display:flex;gap:22px;font-size:15px}
+  header nav a{color:var(--muted);text-decoration:none}
+  header nav a:hover{color:var(--ink)}
+
+  /* hero */
+  .hero{background:linear-gradient(135deg,#2563eb 0%,#6d28d9 42%,#9333ea 74%,#c63cc8 100%);
+        color:#fff;padding:84px 0 96px;text-align:center;position:relative;overflow:hidden}
+  .hero img.mark{width:108px;height:108px;filter:brightness(0) invert(1);opacity:.97}
+  .hero h1{font-size:clamp(34px,5vw,52px);line-height:1.14;letter-spacing:-1px;
+           margin:26px auto 18px;max-width:15ch;font-weight:800}
+  .hero p{font-size:clamp(17px,2.2vw,20px);opacity:.93;max-width:56ch;margin:0 auto 34px}
+  .btn{display:inline-block;background:#fff;color:#4c1d95;font-weight:700;font-size:16px;
+       padding:14px 30px;border-radius:10px;text-decoration:none;
+       box-shadow:0 8px 26px rgba(30,10,70,.24)}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:#fff;box-shadow:none;
+             border:1.5px solid rgba(255,255,255,.5);margin-left:10px}
+
+  /* sections */
+  section{padding:76px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:clamp(24px,3.2vw,32px);letter-spacing:-.6px;margin:0 0 12px;font-weight:800}
+  .lede{color:var(--muted);max-width:62ch;margin:0 0 40px}
+
+  /* four steps, one row on desktop */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:start}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 20px}
+  .card h3{margin:0 0 7px;font-size:17px;letter-spacing:-.2px}
+  .card p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.55}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;
+       border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+       color:#fff;font-weight:700;font-size:13.5px;margin-bottom:12px}
+  @media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:560px){ .grid{grid-template-columns:1fr} }
+
+  figure{margin:0 0 34px}
+  figure img{width:100%;border-radius:14px;border:1px solid var(--line);
+             box-shadow:0 18px 44px rgba(40,28,80,.10);display:block}
+  figcaption{color:var(--muted);font-size:14.5px;margin-top:12px;text-align:center}
+
+  .privacy{background:#fff}
+  .privacy ul{margin:0;padding-left:22px;color:var(--muted)}
+  .privacy li{margin:9px 0}
+  .privacy li b{color:var(--ink);font-weight:600}
+
+  .note{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;
+        padding:18px 22px;color:#8a3d10;font-size:15.5px;margin-top:30px}
+
+  footer{padding:44px 0 66px;color:var(--muted);font-size:14.5px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  footer a{color:var(--muted);text-decoration:none;margin-right:18px}
+  footer a:hover{color:var(--accent)}
+  footer .sp{margin-left:auto}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <img src="assets/mark.png" alt="">
+    <b>CaptureProof Pro</b>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#privacy">Privacy</a>
+      <a href="privacy.html">Policy</a>
+      <a href="https://github.com/appscreator/captureproof/issues">Support</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <img class="mark" src="assets/mark.png" alt="CaptureProof Pro">
+    <h1>Screenshots you can send without second-guessing</h1>
+    <p>Capture a full web page, see what's sensitive on it, black it out in one click,
+       and export a proof report. All of it inside your browser.</p>
+    <a class="btn" href="CHROME_WEB_STORE_URL">Add to Chrome</a>
+    <a class="btn ghost" href="#how">See how it works</a>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="lede">Four steps, all local. Nothing is sent anywhere at any point.</p>
+    <div class="grid">
+      <div class="card">
+        <div class="num">1</div>
+        <h3>Capture</h3>
+        <p>The full page, scrolled and stitched automatically. Or the visible area,
+           or a region you drag.</p>
+      </div>
+      <div class="card">
+        <div class="num">2</div>
+        <h3>Detect</h3>
+        <p>Emails, phone numbers, card numbers, tax IDs, keys and tokens — found and
+           rated, highest risk first.</p>
+      </div>
+      <div class="card">
+        <div class="num">3</div>
+        <h3>Redact</h3>
+        <p>All at once, high-risk only, or item by item. Solid black painted into the
+           image. The pixels are gone.</p>
+      </div>
+      <div class="card">
+        <div class="num">4</div>
+        <h3>Export</h3>
+        <p>A plain PNG, or a PDF proof report carrying the source URL, page title and
+           capture time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What it looks like</h2>
+    <p class="lede">Screens from the extension, using a demo page of fabricated data.</p>
+
+    <figure>
+      <img src="assets/shot-detect.png" alt="The editor listing detected sensitive items, highest risk first">
+      <figcaption>Detected items are listed and rated, with high-risk entries at the top.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="assets/shot-redact.png" alt="The same capture with sensitive values blacked out">
+      <figcaption>One click blacks out everything the scan found.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="assets/shot-export.png" alt="An exported PDF proof report with source URL and capture time">
+      <figcaption>The exported report records where the screenshot came from and when.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="privacy" id="privacy">
+  <div class="wrap">
+    <h2>Privacy</h2>
+    <p class="lede">The short version, in plain terms. The
+       <a href="privacy.html">full policy</a> has the detail.</p>
+    <ul>
+      <li><b>No network requests.</b> The extension does not contact any server. There is
+          no server to contact.</li>
+      <li><b>No account, no sign-in, no analytics, no tracking.</b> Nothing about you is
+          gathered, profiled, or sent anywhere.</li>
+      <li><b>Your capture is deleted as soon as the editor opens it.</b> It is written to
+          local storage purely to hand it from the background worker to the editor tab,
+          then removed immediately.</li>
+      <li><b>No host permissions.</b> The extension cannot run on pages you have not
+          explicitly asked it to capture.</li>
+      <li><b>Exports go where you put them.</b> Files are saved to your own device by your
+          browser's normal download flow.</li>
+    </ul>
+
+    <div class="note">
+      <b>On detection:</b> pattern matching catches common formats, but it is an assistant,
+      not a guarantee. Unusual formats can be missed and ordinary text is occasionally
+      flagged. Review every capture before sharing it — the manual redaction tool is there
+      for anything the scan does not catch.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="privacy.html">Privacy policy</a>
+    <a href="https://github.com/appscreator/captureproof/issues">Support</a>
+    <a href="CHROME_WEB_STORE_URL">Chrome Web Store</a>
+    <span class="sp">© 2026 CaptureProof Pro</span>
+  </div>
+</footer>
+
+</body>
+</html>
