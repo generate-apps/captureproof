@@ -7,33 +7,97 @@
 <meta name="description" content="Privacy policy for the CaptureProof Pro Chrome extension. Page content is handled entirely on your device and never transmitted, sold, or shared.">
 <link rel="icon" href="assets/favicon.png">
 <style>
-  :root{--ink:#16151f;--muted:#5f5c73;--line:#e7e4f0;--bg:#fbfaff;--accent:#6d28d9}
+  /* Same tokens as index.html, which are the extension's own. */
+  :root{
+    --accent:#6d28d9; --accent-hover:#5b21b6; --accent-tint:#f2ecfb;
+    --ink:#1d1d1f; --ink-2:#6e6e73; --ink-3:#86868b;
+    --bg:#ffffff; --surface:#f5f5f7; --line:#ededf0; --line-2:#e5e5ea;
+    --ok:#22c55e; --ok-tint:#e8f8ee;
+    --r-lg:16px; --r-md:12px; --r-sm:9px;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --max:1160px;
+  }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);
-       font:17px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-       -webkit-font-smoothing:antialiased}
-  a{color:var(--accent)}
-  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
-  header{border-bottom:1px solid var(--line);background:#fff}
-  header .wrap{display:flex;align-items:center;gap:12px;height:64px}
-  header img{width:28px;height:28px}
-  header b{font-size:17px;letter-spacing:-.2px}
-  header a{margin-left:auto;font-size:15px;color:var(--muted);text-decoration:none}
-  main{padding:56px 0 90px}
-  h1{font-size:36px;letter-spacing:-.9px;margin:0 0 6px;font-weight:800}
-  .meta{color:var(--muted);font-size:15px;margin:0 0 40px}
-  h2{font-size:21px;letter-spacing:-.3px;margin:44px 0 12px;font-weight:700}
-  p,li{color:#2c2940}
-  ul{padding-left:22px}
-  li{margin:8px 0}
-  .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 26px;margin:26px 0}
-  .box p:first-child{margin-top:0}
-  .box p:last-child{margin-bottom:0}
-  table{width:100%;border-collapse:collapse;margin:18px 0;font-size:15.5px}
-  th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-  th{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-  code{background:#f1eefa;padding:2px 6px;border-radius:5px;font-size:14.5px}
-  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:14.5px}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+       font-size:15.5px;line-height:1.6;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
+  .eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+           letter-spacing:.06em;color:var(--ink-3);font-weight:500}
+
+  /* header — identical to the home page */
+  header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.82);
+         backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;align-items:center;gap:11px;height:60px}
+  header img{width:26px;height:26px}
+  header .name{font-size:15px;font-weight:600;letter-spacing:-.015em}
+  header .name span{color:var(--ink-3);font-weight:500}
+  header nav{margin-left:auto;display:flex;align-items:center;gap:26px;font-size:14px}
+  header nav a{color:var(--ink-2)}
+  header nav a:hover{color:var(--ink)}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:550;
+       letter-spacing:-.01em;padding:11px 20px;border-radius:var(--r-sm);
+       background:var(--accent);color:#fff;transition:background .15s}
+  .btn:hover{background:var(--accent-hover)}
+
+  /* compact title band */
+  .title{padding:34px 0 26px;background:
+         radial-gradient(760px 300px at 82% -40%, var(--accent-tint), transparent 62%), var(--bg);
+         border-bottom:1px solid var(--line)}
+  .title h1{font-size:clamp(27px,3.2vw,36px);letter-spacing:-.032em;font-weight:700;margin:9px 0 6px}
+  .title .meta{color:var(--ink-3);font-size:13.5px;margin:0}
+
+  /* two columns so the text isn't a narrow ribbon in a sea of white */
+  .doc{display:grid;grid-template-columns:196px 1fr;gap:44px;padding:34px 0 56px;align-items:start}
+  nav.toc{position:sticky;top:80px}
+  nav.toc ol{list-style:none;margin:9px 0 0;padding:0;counter-reset:s}
+  nav.toc li{counter-increment:s;margin:0 0 1px}
+  nav.toc a{display:block;font-size:13px;color:var(--ink-2);padding:4px 9px;
+            border-radius:var(--r-sm);border-left:2px solid transparent;line-height:1.4}
+  nav.toc a:before{content:counter(s) ". ";color:var(--ink-3)}
+  nav.toc a:hover{background:var(--surface);color:var(--ink)}
+
+  .body h2{font-size:17px;font-weight:650;letter-spacing:-.02em;margin:26px 0 8px;
+           scroll-margin-top:78px}
+  .body h2:first-of-type{margin-top:0}
+  .body p{margin:0 0 10px;color:#33323a}
+  .body ul{margin:0 0 10px;padding-left:20px;color:#33323a}
+  .body li{margin:4px 0}
+  .body a{font-weight:500}
+
+  .summary{background:var(--accent-tint);border:1px solid #e3d8f7;border-radius:var(--r-md);
+           padding:16px 19px;margin:0 0 8px;color:#3b2d63;line-height:1.55}
+  .callout{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
+           padding:16px 19px;margin:10px 0}
+  .callout ul{margin:8px 0 0}
+  .callout li{margin:6px 0}
+
+  table{width:100%;border-collapse:collapse;margin:10px 0 12px;font-size:14px}
+  th{text-align:left;padding:0 10px 7px;font-family:var(--mono);font-size:9.5px;
+     text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;
+     border-bottom:1px solid var(--line-2)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:#33323a}
+  tr:last-child td{border-bottom:0}
+  code{font-family:var(--mono);background:var(--accent-tint);color:#4c1d95;
+       padding:1px 5px;border-radius:5px;font-size:12.5px}
+
+  .tickrow{display:flex;gap:9px;align-items:flex-start;margin:6px 0}
+  .tick{flex:none;width:17px;height:17px;border-radius:50%;background:var(--ok-tint);
+        color:#137a41;display:flex;align-items:center;justify-content:center;
+        font-size:10px;font-weight:700;margin-top:3px}
+
+  footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--ink-3);font-size:13.5px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  footer a{color:var(--ink-3);margin-right:18px}
+  footer a:hover{color:var(--accent)}
+  footer .sp{margin-left:auto}
+
+  @media (max-width:860px){
+    .doc{grid-template-columns:1fr;gap:20px}
+    nav.toc{position:static;display:none}
+  }
 </style>
 </head>
 <body>
@@ -41,154 +105,173 @@
 <header>
   <div class="wrap">
     <img src="assets/mark.png" alt="">
-    <b>CaptureProof Pro</b>
-    <a href="index.html">← Back to site</a>
+    <div class="name">CaptureProof <span>Pro</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="https://github.com/generate-apps/captureproof/issues">Support</a>
+      <a class="btn" href="CHROME_WEB_STORE_URL">Add to Chrome</a>
+    </nav>
   </div>
 </header>
 
-<main>
-<div class="wrap">
-
-  <h1>Privacy policy</h1>
-  <p class="meta">CaptureProof Pro browser extension · Last updated 27 July 2026</p>
-
-  <div class="box">
-    <p><b>Summary:</b> CaptureProof Pro handles the contents of the pages you explicitly
-    choose to capture. All of that handling happens on your own device. The extension makes
-    no network requests of any kind, has no server, and transmits nothing to us or to anyone
-    else. Nothing is sold, shared, or retained after you close the editor.</p>
+<div class="title">
+  <div class="wrap">
+    <div class="eyebrow">Legal</div>
+    <h1>Privacy policy</h1>
+    <p class="meta">CaptureProof Pro browser extension · Last updated 27 July 2026</p>
   </div>
-
-  <h2>1. Who this covers</h2>
-  <p>This policy applies to the CaptureProof Pro extension for Google Chrome and
-  Chromium-based browsers, distributed through the Chrome Web Store. It does not cover
-  any website you choose to capture with it, which remains governed by that site's own
-  policy.</p>
-
-  <h2>2. What the extension handles</h2>
-  <p>To do its job, the extension necessarily processes the contents of pages you
-  explicitly ask it to capture. Here is everything it touches and what becomes of it.</p>
-
-  <table>
-    <tr><th>Data</th><th>Why</th><th>Where it goes</th></tr>
-    <tr>
-      <td>Pixels of the page you capture</td>
-      <td>To build the screenshot</td>
-      <td>Held in memory and in your browser's local storage only long enough to pass the
-          capture from the background worker to the editor tab, then deleted immediately</td>
-    </tr>
-    <tr>
-      <td>Text of the page you capture</td>
-      <td>To find patterns that look sensitive, and their position on screen</td>
-      <td>Read in the page, matched against patterns locally, never copied out of your
-          browser</td>
-    </tr>
-    <tr>
-      <td>Page URL, title and capture time</td>
-      <td>To record provenance on the exported proof report</td>
-      <td>Written into the file you export, and nowhere else</td>
-    </tr>
-    <tr>
-      <td>Your annotations, notes and report title</td>
-      <td>To build the export</td>
-      <td>Held in the editor tab only, discarded when you close it</td>
-    </tr>
-  </table>
-
-  <h2>3. What is never transmitted, retained, or gathered</h2>
-  <p>Because a captured page can contain anything, the extension may process personal,
-  financial, or authentication details that happen to appear on it — that is precisely
-  what the detection feature exists to find. None of it goes anywhere.</p>
-  <ul>
-    <li>Nothing is transmitted off your device, in any form, at any time.</li>
-    <li>No account, sign-in, email address or user profile is requested or created.</li>
-    <li>No analytics, telemetry, crash reporting or usage statistics.</li>
-    <li>No advertising identifiers, cookies or cross-site tracking.</li>
-    <li>No browsing history, and no record kept of which pages you capture.</li>
-    <li>Nothing is retained after the editor tab is closed.</li>
-    <li>Nothing is ever sold, rented, or shared.</li>
-  </ul>
-
-  <h2>4. No transmission</h2>
-  <p>The extension contains no code that opens a network connection. It has no backend
-  service, no API endpoint, and no third-party SDK, library, or tracker embedded in it.
-  Nothing is uploaded, because there is nowhere for it to be uploaded to. You can confirm
-  this by inspecting the extension's source, which is plain, unobfuscated JavaScript.</p>
-
-  <h2>5. Storage and retention</h2>
-  <p>The extension uses <code>chrome.storage.local</code> as a one-shot handoff. The
-  background worker writes the capture there, the editor tab reads it, and the editor
-  deletes it in the same step, before you interact with anything. Nothing is retained
-  between sessions. Uninstalling the extension removes any remaining extension storage.</p>
-  <p>Files you export are saved to your device through your browser's normal download
-  behaviour, and are yours to manage.</p>
-
-  <h2>6. Permissions and why each is needed</h2>
-  <table>
-    <tr><th>Permission</th><th>Reason</th></tr>
-    <tr><td><code>activeTab</code></td>
-        <td>Access the page you are capturing, only for the tab you are on and only after
-            you click the toolbar button.</td></tr>
-    <tr><td><code>scripting</code></td>
-        <td>Run the capture and detection helpers inside that page.</td></tr>
-    <tr><td><code>storage</code></td>
-        <td>The one-shot handoff described above.</td></tr>
-    <tr><td><code>unlimitedStorage</code></td>
-        <td>A full-page capture of a long page can exceed the default storage quota during
-            that handoff.</td></tr>
-  </table>
-  <p>The extension requests no host permissions, so it cannot read or act on any page you
-  have not explicitly asked it to capture.</p>
-
-  <h2>7. Third parties</h2>
-  <p>There are none. No data is sold, rented, shared, or disclosed to anyone, for any
-  purpose, including advertising. The extension bundles no third-party analytics or
-  advertising code.</p>
-
-  <h2>8. Limited Use disclosure</h2>
-  <div class="box">
-    <p>CaptureProof Pro's use of information received from its permissions adheres to the
-    <a href="https://developer.chrome.com/docs/webstore/program-policies/limited-use">Chrome
-    Web Store User Data Policy</a>, including the Limited Use requirements. Specifically:</p>
-    <ul>
-      <li><b>Allowed use.</b> Page content is used solely to produce the screenshot, detect
-      sensitive values within it, and build the file you export — the extension's single
-      purpose. It is used for nothing else.</li>
-      <li><b>Allowed transfer.</b> No user data is transferred to anyone. The extension has
-      no network capability.</li>
-      <li><b>No advertising.</b> No user data is used or transferred for personalised,
-      re-targeted, or interest-based advertising.</li>
-      <li><b>No human review.</b> No human, including the developer, can read your data.
-      It never leaves your device, so there is nothing to read.</li>
-    </ul>
-  </div>
-
-  <h2>9. Children</h2>
-  <p>The extension is not directed at children and collects no data from anyone,
-  regardless of age.</p>
-
-  <h2>10. Limits of automatic detection</h2>
-  <p>Sensitive-data detection is pattern-based. It reliably catches common formats, but it
-  is an assistant rather than a guarantee: unusual formats can be missed, and ordinary text
-  can occasionally be flagged. You remain responsible for reviewing any capture before you
-  share it. A manual redaction tool is provided for anything the automatic scan does not
-  catch.</p>
-
-  <h2>11. Changes to this policy</h2>
-  <p>Any change will be posted on this page with a revised "last updated" date. Material
-  changes will also be noted in the extension's Chrome Web Store listing.</p>
-
-  <h2>12. Contact</h2>
-  <p>Questions about this policy, or about privacy in the extension, can be sent to
-  <a href="mailto:bhavyabhatia@gmail.com">bhavyabhatia@gmail.com</a>, or raised as an issue
-  at <a href="https://github.com/appscreator/captureproof/issues">the project's
-  issue tracker</a>.</p>
-
 </div>
-</main>
+
+<div class="wrap doc">
+
+  <nav class="toc">
+    <div class="eyebrow">Contents</div>
+    <ol>
+      <li><a href="#s1">Who this covers</a></li>
+      <li><a href="#s2">What it handles</a></li>
+      <li><a href="#s3">Never transmitted</a></li>
+      <li><a href="#s4">No transmission</a></li>
+      <li><a href="#s5">Storage and retention</a></li>
+      <li><a href="#s6">Permissions</a></li>
+      <li><a href="#s7">Third parties</a></li>
+      <li><a href="#s8">Limited Use</a></li>
+      <li><a href="#s9">Children</a></li>
+      <li><a href="#s10">Detection limits</a></li>
+      <li><a href="#s11">Changes</a></li>
+      <li><a href="#s12">Contact</a></li>
+    </ol>
+  </nav>
+
+  <div class="body">
+
+    <p class="summary"><b>Summary.</b> CaptureProof Pro handles the contents of the pages you
+    explicitly choose to capture. All of that handling happens on your own device. The
+    extension makes no network requests of any kind, has no server, and transmits nothing to
+    us or to anyone else. Nothing is sold, shared, or retained after you close the editor.</p>
+
+    <h2 id="s1">1. Who this covers</h2>
+    <p>This policy applies to the CaptureProof Pro extension for Google Chrome and
+    Chromium-based browsers, distributed through the Chrome Web Store. It does not cover any
+    website you choose to capture with it, which remains governed by that site's own policy.</p>
+
+    <h2 id="s2">2. What the extension handles</h2>
+    <p>To do its job, the extension necessarily processes the contents of pages you explicitly
+    ask it to capture. Here is everything it touches and what becomes of it.</p>
+    <table>
+      <tr><th>Data</th><th>Why</th><th>Where it goes</th></tr>
+      <tr><td>Pixels of the page you capture</td>
+          <td>To build the screenshot</td>
+          <td>Held in memory and in your browser's local storage only long enough to pass the
+              capture from the background worker to the editor tab, then deleted immediately</td></tr>
+      <tr><td>Text of the page you capture</td>
+          <td>To find patterns that look sensitive, and their position on screen</td>
+          <td>Read in the page, matched against patterns locally, never copied out of your
+              browser</td></tr>
+      <tr><td>Page URL, title and capture time</td>
+          <td>To record provenance on the exported proof report</td>
+          <td>Written into the file you export, and nowhere else</td></tr>
+      <tr><td>Your annotations, notes and report title</td>
+          <td>To build the export</td>
+          <td>Held in the editor tab only, discarded when you close it</td></tr>
+    </table>
+
+    <h2 id="s3">3. What is never transmitted, retained, or gathered</h2>
+    <p>Because a captured page can contain anything, the extension may process personal,
+    financial, or authentication details that happen to appear on it — that is precisely what
+    the detection feature exists to find. None of it goes anywhere.</p>
+    <div class="callout">
+      <div class="tickrow"><span class="tick">✓</span><div>Nothing is transmitted off your device, in any form, at any time.</div></div>
+      <div class="tickrow"><span class="tick">✓</span><div>No account, sign-in, email address or user profile is requested or created.</div></div>
+      <div class="tickrow"><span class="tick">✓</span><div>No analytics, telemetry, crash reporting or usage statistics.</div></div>
+      <div class="tickrow"><span class="tick">✓</span><div>No advertising identifiers, cookies or cross-site tracking.</div></div>
+      <div class="tickrow"><span class="tick">✓</span><div>No browsing history, and no record kept of which pages you capture.</div></div>
+      <div class="tickrow"><span class="tick">✓</span><div>Nothing is retained after the editor tab is closed.</div></div>
+      <div class="tickrow"><span class="tick">✓</span><div>Nothing is ever sold, rented, or shared.</div></div>
+    </div>
+
+    <h2 id="s4">4. No transmission</h2>
+    <p>The extension contains no code that opens a network connection. It has no backend
+    service, no API endpoint, and no third-party SDK, library, or tracker embedded in it.
+    Nothing is uploaded, because there is nowhere for it to be uploaded to. You can confirm
+    this by inspecting the extension's source, which is plain, unobfuscated JavaScript.</p>
+
+    <h2 id="s5">5. Storage and retention</h2>
+    <p>The extension uses <code>chrome.storage.local</code> as a one-shot handoff. The
+    background worker writes the capture there, the editor tab reads it, and the editor deletes
+    it in the same step, before you interact with anything. Nothing is retained between
+    sessions. Uninstalling the extension removes any remaining extension storage.</p>
+    <p>Files you export are saved to your device through your browser's normal download
+    behaviour, and are yours to manage.</p>
+
+    <h2 id="s6">6. Permissions and why each is needed</h2>
+    <table>
+      <tr><th>Permission</th><th>Reason</th></tr>
+      <tr><td><code>activeTab</code></td>
+          <td>Access the page you are capturing, only for the tab you are on and only after you
+              click the toolbar button.</td></tr>
+      <tr><td><code>scripting</code></td>
+          <td>Run the capture and detection helpers inside that page.</td></tr>
+      <tr><td><code>storage</code></td>
+          <td>The one-shot handoff described above.</td></tr>
+      <tr><td><code>unlimitedStorage</code></td>
+          <td>A full-page capture of a long page can exceed the default storage quota during
+              that handoff.</td></tr>
+    </table>
+    <p>The extension requests no host permissions, so it cannot read or act on any page you
+    have not explicitly asked it to capture.</p>
+
+    <h2 id="s7">7. Third parties</h2>
+    <p>There are none. No data is sold, rented, shared, or disclosed to anyone, for any purpose,
+    including advertising. The extension bundles no third-party analytics or advertising code.</p>
+
+    <h2 id="s8">8. Limited Use disclosure</h2>
+    <div class="callout">
+      <p style="margin:0">CaptureProof Pro's use of information received from its permissions
+      adheres to the <a href="https://developer.chrome.com/docs/webstore/program-policies/limited-use">Chrome
+      Web Store User Data Policy</a>, including the Limited Use requirements. Specifically:</p>
+      <ul>
+        <li><b>Allowed use.</b> Page content is used solely to produce the screenshot, detect
+        sensitive values within it, and build the file you export — the extension's single
+        purpose. It is used for nothing else.</li>
+        <li><b>Allowed transfer.</b> No user data is transferred to anyone. The extension has
+        no network capability.</li>
+        <li><b>No advertising.</b> No user data is used or transferred for personalised,
+        re-targeted, or interest-based advertising.</li>
+        <li><b>No human review.</b> No human, including the developer, can read your data. It
+        never leaves your device, so there is nothing to read.</li>
+      </ul>
+    </div>
+
+    <h2 id="s9">9. Children</h2>
+    <p>The extension is not directed at children and collects no data from anyone, regardless
+    of age.</p>
+
+    <h2 id="s10">10. Limits of automatic detection</h2>
+    <p>Sensitive-data detection is pattern-based. It reliably catches common formats, but it is
+    an assistant rather than a guarantee: unusual formats can be missed, and ordinary text can
+    occasionally be flagged. You remain responsible for reviewing any capture before you share
+    it. A manual redaction tool is provided for anything the automatic scan does not catch.</p>
+
+    <h2 id="s11">11. Changes to this policy</h2>
+    <p>Any change will be posted on this page with a revised "last updated" date. Material
+    changes will also be noted in the extension's Chrome Web Store listing.</p>
+
+    <h2 id="s12">12. Contact</h2>
+    <p>Questions about this policy, or about privacy in the extension, can be sent to
+    <a href="mailto:bhavyabhatia@gmail.com">bhavyabhatia@gmail.com</a>, or raised as an issue at
+    <a href="https://github.com/generate-apps/captureproof/issues">the project's issue
+    tracker</a>.</p>
+
+  </div>
+</div>
 
 <footer>
-  <div class="wrap">© 2026 CaptureProof Pro · <a href="index.html">Home</a></div>
+  <div class="wrap">
+    <a href="index.html">Home</a>
+    <a href="https://github.com/generate-apps/captureproof/issues">Support</a>
+    <a href="CHROME_WEB_STORE_URL">Chrome Web Store</a>
+    <span class="sp">© 2026 CaptureProof Pro</span>
+  </div>
 </footer>
 
 </body>

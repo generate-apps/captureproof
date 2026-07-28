@@ -3,81 +3,157 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CaptureProof Pro — full-page screenshots with automatic redaction</title>
-<meta name="description" content="Capture a full web page, automatically flag sensitive data, black it out in one click, and export a proof report. Everything runs in your browser.">
+<title>CaptureProof Pro — full-page screenshots without privacy mistakes</title>
+<meta name="description" content="Capture any web page, automatically find and black out sensitive information, and export client-ready proof reports. Everything runs in your browser.">
 <link rel="icon" href="assets/favicon.png">
 <style>
+  /* Design tokens lifted from the extension so the site and the product match exactly. */
   :root{
-    --ink:#16151f; --muted:#5f5c73; --line:#e7e4f0; --bg:#fbfaff;
-    --accent:#6d28d9; --accent-2:#8b5cf6;
-    --max:1080px;
+    --accent:#6d28d9; --accent-hover:#5b21b6; --accent-tint:#f2ecfb;
+    --ink:#1d1d1f; --ink-2:#6e6e73; --ink-3:#86868b;
+    --bg:#ffffff; --surface:#f5f5f7; --line:#ededf0; --line-2:#e5e5ea;
+    --ok:#22c55e; --ok-tint:#e8f8ee;
+    --dark:#17162a;
+    --r-lg:16px; --r-md:12px; --r-sm:9px;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --max:1160px;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;background:var(--bg);color:var(--ink);
-       font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-       -webkit-font-smoothing:antialiased}
-  a{color:var(--accent)}
-  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+       font-size:16px;line-height:1.6;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
 
-  /* header */
-  header{position:sticky;top:0;z-index:10;background:rgba(251,250,255,.86);
-         backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  header .wrap{display:flex;align-items:center;gap:12px;height:64px}
-  header img{width:28px;height:28px}
-  header b{font-size:17px;letter-spacing:-.2px}
-  header nav{margin-left:auto;display:flex;gap:22px;font-size:15px}
-  header nav a{color:var(--muted);text-decoration:none}
+  /* mono micro-label — the extension's signature detail */
+  .eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+           letter-spacing:.06em;color:var(--ink-3);font-weight:500}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.82);
+         backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;align-items:center;gap:11px;height:60px}
+  header img{width:26px;height:26px}
+  header .name{font-size:15px;font-weight:600;letter-spacing:-.015em}
+  header .name span{color:var(--ink-3);font-weight:500}
+  header nav{margin-left:auto;display:flex;align-items:center;gap:26px;font-size:14px}
+  header nav a{color:var(--ink-2)}
   header nav a:hover{color:var(--ink)}
 
-  /* hero */
-  .hero{background:linear-gradient(135deg,#2563eb 0%,#6d28d9 42%,#9333ea 74%,#c63cc8 100%);
-        color:#fff;padding:84px 0 96px;text-align:center;position:relative;overflow:hidden}
-  .hero img.mark{width:108px;height:108px;filter:brightness(0) invert(1);opacity:.97}
-  .hero h1{font-size:clamp(34px,5vw,52px);line-height:1.14;letter-spacing:-1px;
-           margin:26px auto 18px;max-width:15ch;font-weight:800}
-  .hero p{font-size:clamp(17px,2.2vw,20px);opacity:.93;max-width:56ch;margin:0 auto 34px}
-  .btn{display:inline-block;background:#fff;color:#4c1d95;font-weight:700;font-size:16px;
-       padding:14px 30px;border-radius:10px;text-decoration:none;
-       box-shadow:0 8px 26px rgba(30,10,70,.24)}
-  .btn:hover{transform:translateY(-1px)}
-  .btn.ghost{background:transparent;color:#fff;box-shadow:none;
-             border:1.5px solid rgba(255,255,255,.5);margin-left:10px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);
+       font-size:14.5px;font-weight:550;letter-spacing:-.01em;padding:11px 20px;
+       border-radius:var(--r-sm);border:1px solid transparent;cursor:pointer;
+       transition:background .15s,border-color .15s,transform .15s}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent-hover)}
+  .btn-ghost{background:var(--bg);color:var(--ink);border-color:var(--line-2)}
+  .btn-ghost:hover{border-color:var(--ink-3)}
+  .btn-lg{font-size:15.5px;padding:14px 26px;border-radius:var(--r-md)}
 
-  /* sections */
-  section{padding:76px 0;border-bottom:1px solid var(--line)}
-  h2{font-size:clamp(24px,3.2vw,32px);letter-spacing:-.6px;margin:0 0 12px;font-weight:800}
-  .lede{color:var(--muted);max-width:62ch;margin:0 0 40px}
+  /* ---------- hero: text left, product right ---------- */
+  .hero{padding:76px 0 84px;background:
+        radial-gradient(1100px 500px at 88% -12%, var(--accent-tint), transparent 62%),
+        var(--bg)}
+  .hero .wrap{display:grid;grid-template-columns:1.02fr 1.18fr;gap:56px;align-items:center}
+  .hero h1{font-size:clamp(34px,4.4vw,54px);line-height:1.06;letter-spacing:-.035em;
+           font-weight:700;margin:16px 0 18px;text-wrap:balance}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero .sub{font-size:17.5px;color:var(--ink-2);line-height:1.55;margin:0 0 28px;max-width:46ch}
+  .cta{display:flex;flex-wrap:wrap;gap:11px}
 
-  /* four steps, one row on desktop */
-  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:start}
-  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 20px}
-  .card h3{margin:0 0 7px;font-size:17px;letter-spacing:-.2px}
-  .card p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.55}
-  .num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;
-       border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
-       color:#fff;font-weight:700;font-size:13.5px;margin-bottom:12px}
-  @media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr)} }
-  @media (max-width:560px){ .grid{grid-template-columns:1fr} }
+  /* browser-chrome frame around the product shot */
+  .frame{position:relative}
+  .chrome{border:1px solid var(--line-2);border-radius:var(--r-lg);overflow:hidden;
+          background:var(--bg);box-shadow:0 26px 60px -18px rgba(29,29,31,.22)}
+  .chrome .bar{display:flex;align-items:center;gap:6px;padding:10px 14px;
+               background:var(--surface);border-bottom:1px solid var(--line)}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .chrome img{width:100%;display:block}
+  .badge{position:absolute;left:-22px;bottom:-24px;background:var(--bg);
+         border:1px solid var(--line-2);border-radius:var(--r-md);padding:13px 16px;
+         box-shadow:0 16px 36px -10px rgba(29,29,31,.20);max-width:238px}
+  .badge .t{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;
+            color:var(--ink);margin-bottom:5px}
+  .badge .t svg{flex:none}
+  .badge p{margin:0;font-family:var(--mono);font-size:9.5px;line-height:1.7;
+           letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
 
-  figure{margin:0 0 34px}
-  figure img{width:100%;border-radius:14px;border:1px solid var(--line);
-             box-shadow:0 18px 44px rgba(40,28,80,.10);display:block}
-  figcaption{color:var(--muted);font-size:14.5px;margin-top:12px;text-align:center}
+  /* ---------- mono strip ---------- */
+  .strip{background:var(--surface);border-top:1px solid var(--line);
+         border-bottom:1px solid var(--line);padding:16px 0}
+  .strip .wrap{display:flex;align-items:center;justify-content:center;gap:9px;
+               font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+               text-transform:uppercase;color:var(--ink-2);text-align:center}
 
-  .privacy{background:#fff}
-  .privacy ul{margin:0;padding-left:22px;color:var(--muted)}
-  .privacy li{margin:9px 0}
-  .privacy li b{color:var(--ink);font-weight:600}
+  /* ---------- sections ---------- */
+  section{padding:86px 0}
+  .head{text-align:center;margin-bottom:48px}
+  .head h2{font-size:clamp(25px,3vw,34px);letter-spacing:-.03em;font-weight:700;margin:12px 0 0}
+  .rule{width:46px;height:3px;border-radius:2px;background:var(--accent);margin:18px auto 0}
 
-  .note{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;
-        padding:18px 22px;color:#8a3d10;font-size:15.5px;margin-top:30px}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-lg);padding:24px 22px}
+  .step .n{width:34px;height:34px;border-radius:var(--r-sm);background:var(--accent-tint);
+           color:var(--accent);display:flex;align-items:center;justify-content:center;
+           font-size:14px;font-weight:650;margin-bottom:16px}
+  .step h3{font-size:15.5px;font-weight:600;letter-spacing:-.015em;margin:0 0 7px}
+  .step p{font-size:14px;color:var(--ink-2);line-height:1.55;margin:0}
 
-  footer{padding:44px 0 66px;color:var(--muted);font-size:14.5px}
-  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
-  footer a{color:var(--muted);text-decoration:none;margin-right:18px}
+  /* ---------- bento ---------- */
+  .bento{display:grid;grid-template-columns:1.55fr 1fr;gap:18px}
+  .bento .row2{display:grid;grid-template-columns:.85fr 1.6fr;gap:18px;grid-column:1/-1}
+  .feat h3{font-size:clamp(20px,2.2vw,26px);letter-spacing:-.028em;font-weight:700;margin:12px 0 10px}
+  .feat p{color:var(--ink-2);font-size:14.5px;line-height:1.6;margin:0}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
+  .chip{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;
+        background:var(--ok-tint);color:#137a41;border-radius:99px;padding:5px 11px;font-weight:600}
+  .card.dark{background:var(--dark);border-color:#2a2743;color:#fff}
+  .card.dark h3{color:#fff}
+  .card.dark p{color:#b7b3c9}
+  .card.dark .eyebrow{color:#8b84b8}
+  .ico{width:38px;height:38px;border-radius:var(--r-sm);background:var(--accent-tint);
+       color:var(--accent);display:flex;align-items:center;justify-content:center}
+  .card.dark .ico{background:rgba(139,92,246,.18);color:#c4b5fd}
+  .arrow{display:inline-flex;align-items:center;gap:7px;margin-top:18px;
+         font-size:14.5px;font-weight:550;color:var(--accent)}
+
+  /* ---------- gallery ---------- */
+  .shots{display:grid;gap:26px}
+  figure{margin:0}
+  figure img{width:100%;display:block;border:1px solid var(--line);border-radius:var(--r-lg)}
+  figcaption{margin-top:11px;font-size:13.5px;color:var(--ink-3);text-align:center}
+
+  /* ---------- privacy ---------- */
+  .priv{background:var(--surface);border-top:1px solid var(--line)}
+  .plist{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 34px;margin-top:8px}
+  .pitem{display:flex;gap:11px;align-items:flex-start}
+  .tick{flex:none;width:19px;height:19px;border-radius:50%;background:var(--ok-tint);
+        color:#137a41;display:flex;align-items:center;justify-content:center;
+        font-size:11px;font-weight:700;margin-top:2px}
+  .pitem b{font-weight:600;font-size:14.5px}
+  .pitem span{display:block;color:var(--ink-2);font-size:14px;line-height:1.55}
+  .note{margin-top:30px;background:#fff8ed;border:1px solid #ffe0b2;border-radius:var(--r-md);
+        padding:16px 20px;font-size:14px;color:#8a5a10;line-height:1.6}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--ink-3);font-size:13.5px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+  footer a{color:var(--ink-3);margin-right:20px}
   footer a:hover{color:var(--accent)}
   footer .sp{margin-left:auto}
+
+  @media (max-width:940px){
+    .hero .wrap{grid-template-columns:1fr;gap:44px}
+    .badge{left:auto;right:12px;bottom:-18px}
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .bento,.bento .row2{grid-template-columns:1fr}
+    .plist{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .steps{grid-template-columns:1fr}
+    section{padding:62px 0}
+    .badge{display:none}
+  }
 </style>
 </head>
 <body>
@@ -85,100 +161,210 @@
 <header>
   <div class="wrap">
     <img src="assets/mark.png" alt="">
-    <b>CaptureProof Pro</b>
+    <div class="name">CaptureProof <span>Pro</span></div>
     <nav>
-      <a href="#how">How it works</a>
+      <a href="#workflow">How it works</a>
+      <a href="#features">Features</a>
       <a href="#privacy">Privacy</a>
-      <a href="privacy.html">Policy</a>
-      <a href="https://github.com/appscreator/captureproof/issues">Support</a>
+      <a class="btn btn-primary" href="CHROME_WEB_STORE_URL">Add to Chrome</a>
     </nav>
   </div>
 </header>
 
+<!-- ---------------- hero ---------------- -->
 <div class="hero">
   <div class="wrap">
-    <img class="mark" src="assets/mark.png" alt="CaptureProof Pro">
-    <h1>Screenshots you can send without second-guessing</h1>
-    <p>Capture a full web page, see what's sensitive on it, black it out in one click,
-       and export a proof report. All of it inside your browser.</p>
-    <a class="btn" href="CHROME_WEB_STORE_URL">Add to Chrome</a>
-    <a class="btn ghost" href="#how">See how it works</a>
+    <div>
+      <div class="eyebrow">Capture · Detect · Redact · Report</div>
+      <h1>Full-page screenshots <em>without privacy mistakes</em></h1>
+      <p class="sub">Capture any web page, automatically find the sensitive information on it,
+         black it out in one click, and export a client-ready proof report.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="CHROME_WEB_STORE_URL">Add to Chrome — it's free</a>
+        <a class="btn btn-ghost btn-lg" href="#features">See what it does</a>
+      </div>
+    </div>
+
+    <div class="frame">
+      <div class="chrome">
+        <div class="bar">
+          <span class="dot" style="background:#ff5f57"></span>
+          <span class="dot" style="background:#febc2e"></span>
+          <span class="dot" style="background:#28c840"></span>
+        </div>
+        <img src="assets/shot-detect.png" alt="The CaptureProof Pro editor listing detected sensitive items, highest risk first">
+      </div>
+      <div class="badge">
+        <div class="t">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.4"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Secure capture
+        </div>
+        <p>Local-first processing enabled</p>
+      </div>
+    </div>
   </div>
 </div>
 
-<section id="how">
+<div class="strip">
   <div class="wrap">
-    <h2>How it works</h2>
-    <p class="lede">Four steps, all local. Nothing is sent anywhere at any point.</p>
-    <div class="grid">
-      <div class="card">
-        <div class="num">1</div>
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+         stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    Local-first processing. Your data never leaves your browser unless you choose to share.
+  </div>
+</div>
+
+<!-- ---------------- workflow ---------------- -->
+<section id="workflow">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">The workflow</div>
+      <h2>Four steps, none of them leave your browser</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="steps">
+      <div class="card step">
+        <div class="n">1</div>
         <h3>Capture</h3>
-        <p>The full page, scrolled and stitched automatically. Or the visible area,
-           or a region you drag.</p>
+        <p>The full page, scrolled and stitched automatically. Or the visible area, or a
+           region you drag.</p>
       </div>
-      <div class="card">
-        <div class="num">2</div>
+      <div class="card step">
+        <div class="n">2</div>
         <h3>Detect</h3>
-        <p>Emails, phone numbers, card numbers, tax IDs, keys and tokens — found and
-           rated, highest risk first.</p>
+        <p>Emails, phone numbers, card numbers, tax IDs, keys and tokens — found and rated,
+           highest risk first.</p>
       </div>
-      <div class="card">
-        <div class="num">3</div>
+      <div class="card step">
+        <div class="n">3</div>
         <h3>Redact</h3>
-        <p>All at once, high-risk only, or item by item. Solid black painted into the
-           image. The pixels are gone.</p>
+        <p>All at once, high-risk only, or item by item. Solid black painted into the image
+           itself.</p>
       </div>
-      <div class="card">
-        <div class="num">4</div>
-        <h3>Export</h3>
-        <p>A plain PNG, or a PDF proof report carrying the source URL, page title and
-           capture time.</p>
+      <div class="card step">
+        <div class="n">4</div>
+        <h3>Report</h3>
+        <p>A plain PNG, or a PDF proof carrying the source URL, page title and capture
+           time.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section>
+<!-- ---------------- bento ---------------- -->
+<section id="features" style="background:var(--surface);border-top:1px solid var(--line)">
   <div class="wrap">
-    <h2>What it looks like</h2>
-    <p class="lede">Screens from the extension, using a demo page of fabricated data.</p>
+    <div class="head">
+      <div class="eyebrow">What it does</div>
+      <h2>Built for screenshots you have to send</h2>
+      <div class="rule"></div>
+    </div>
 
-    <figure>
-      <img src="assets/shot-detect.png" alt="The editor listing detected sensitive items, highest risk first">
-      <figcaption>Detected items are listed and rated, with high-risk entries at the top.</figcaption>
-    </figure>
+    <div class="bento">
+      <div class="card feat">
+        <div class="eyebrow">Pattern detection</div>
+        <h3>Finds what you'd rather not publish</h3>
+        <p>Every capture is scanned for the formats that most often cause a leak, each one
+           rated so you can triage at a glance instead of reading the whole page again.</p>
+        <div class="chips">
+          <span class="chip">Emails</span>
+          <span class="chip">Card numbers</span>
+          <span class="chip">Tax IDs</span>
+          <span class="chip">Phone numbers</span>
+          <span class="chip">API keys</span>
+          <span class="chip">Tokens</span>
+          <span class="chip">IP addresses</span>
+        </div>
+      </div>
 
-    <figure>
-      <img src="assets/shot-redact.png" alt="The same capture with sensitive values blacked out">
-      <figcaption>One click blacks out everything the scan found.</figcaption>
-    </figure>
+      <div class="card dark feat">
+        <div class="ico">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round"><rect x="3" y="9" width="18" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M3 5h18M3 19h18" opacity=".45"/></svg>
+        </div>
+        <h3>Redaction that can't be undone</h3>
+        <p>Black boxes are painted into the image itself, not layered over it. The pixels
+           underneath are gone — there is nothing for a recipient to peel back.</p>
+      </div>
 
-    <figure>
-      <img src="assets/shot-export.png" alt="An exported PDF proof report with source URL and capture time">
-      <figcaption>The exported report records where the screenshot came from and when.</figcaption>
-    </figure>
+      <div class="row2">
+        <div class="card feat">
+          <div class="ico">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7z"/><path d="M9 13h6M9 17h4"/></svg>
+          </div>
+          <h3>Provenance on every report</h3>
+          <p>Each proof records the source URL, the page title, the capture time, and a
+             summary of exactly what was redacted.</p>
+        </div>
+
+        <div class="card feat">
+          <div class="eyebrow">Annotate and export</div>
+          <h3>Client-ready in one pass</h3>
+          <p>Arrows, boxes, highlights, numbered steps, text and crop — then export as PNG or
+             PDF, with templates for client updates, support tickets and bug reports.</p>
+          <a class="arrow" href="#gallery">See it in action
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="privacy" id="privacy">
+<!-- ---------------- gallery ---------------- -->
+<section id="gallery">
   <div class="wrap">
-    <h2>Privacy</h2>
-    <p class="lede">The short version, in plain terms. The
-       <a href="privacy.html">full policy</a> has the detail.</p>
-    <ul>
-      <li><b>No network requests.</b> The extension does not contact any server. There is
-          no server to contact.</li>
-      <li><b>No account, no sign-in, no analytics, no tracking.</b> Nothing about you is
-          gathered, profiled, or sent anywhere.</li>
-      <li><b>Your capture is deleted as soon as the editor opens it.</b> It is written to
-          local storage purely to hand it from the background worker to the editor tab,
-          then removed immediately.</li>
-      <li><b>No host permissions.</b> The extension cannot run on pages you have not
-          explicitly asked it to capture.</li>
-      <li><b>Exports go where you put them.</b> Files are saved to your own device by your
-          browser's normal download flow.</li>
-    </ul>
+    <div class="head">
+      <div class="eyebrow">What it looks like</div>
+      <h2>Screens from the extension</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="assets/shot-detect.png" alt="Detected sensitive items listed with confidence ratings">
+        <figcaption>Detected items are rated, with high-risk entries at the top of the list.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/shot-redact.png" alt="The same capture with sensitive values blacked out">
+        <figcaption>One click blacks out everything the scan found.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/shot-export.png" alt="An exported PDF proof report with source URL and capture time">
+        <figcaption>The exported report records where the screenshot came from and when.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------- privacy ---------------- -->
+<section class="priv" id="privacy">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Privacy</div>
+      <h2>There is no server to send anything to</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="plist">
+      <div class="pitem"><span class="tick">✓</span><div>
+        <b>No network requests</b>
+        <span>The extension contains no code that opens a connection. There is no backend.</span>
+      </div></div>
+      <div class="pitem"><span class="tick">✓</span><div>
+        <b>No account, no analytics, no tracking</b>
+        <span>Nothing about you is gathered, profiled, or sent anywhere.</span>
+      </div></div>
+      <div class="pitem"><span class="tick">✓</span><div>
+        <b>Captures are deleted immediately</b>
+        <span>Stored only to hand the image to the editor tab, then removed in the same step.</span>
+      </div></div>
+      <div class="pitem"><span class="tick">✓</span><div>
+        <b>No host permissions</b>
+        <span>It cannot run on any page you haven't explicitly asked it to capture.</span>
+      </div></div>
+    </div>
 
     <div class="note">
       <b>On detection:</b> pattern matching catches common formats, but it is an assistant,
@@ -186,13 +372,15 @@
       flagged. Review every capture before sharing it — the manual redaction tool is there
       for anything the scan does not catch.
     </div>
+
+    <p style="margin-top:26px"><a href="privacy.html">Read the full privacy policy →</a></p>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
     <a href="privacy.html">Privacy policy</a>
-    <a href="https://github.com/appscreator/captureproof/issues">Support</a>
+    <a href="https://github.com/generate-apps/captureproof/issues">Support</a>
     <a href="CHROME_WEB_STORE_URL">Chrome Web Store</a>
     <span class="sp">© 2026 CaptureProof Pro</span>
   </div>
