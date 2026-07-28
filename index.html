@@ -105,9 +105,19 @@
   .bento .row2{display:grid;grid-template-columns:.85fr 1.6fr;gap:18px;grid-column:1/-1}
   .feat h3{font-size:clamp(20px,2.2vw,26px);letter-spacing:-.028em;font-weight:700;margin:12px 0 10px}
   .feat p{color:var(--ink-2);font-size:14.5px;line-height:1.6;margin:0}
-  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
-  .chip{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;
-        background:var(--ok-tint);color:#137a41;border-radius:99px;padding:5px 11px;font-weight:600}
+  .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:20px}
+  /* all ten detectors on one row at desktop; .hi marks the high-risk ones */
+  .chip{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.03em;
+        white-space:nowrap;background:var(--surface);color:var(--ink-2);border:1px solid var(--line-2);
+        border-radius:99px;padding:4px 9px;font-weight:600}
+  .chip.hi{background:var(--ok-tint);color:#137a41;border-color:#c7ecd6}
+  /* legend — without it the green/grey split is just decoration */
+  .legend{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:12px;
+          font-size:12.5px;color:var(--ink-3)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:9px;height:9px;border-radius:99px;background:var(--surface);
+      border:1px solid var(--line-2);flex:none}
+  .sw.hi{background:var(--ok-tint);border-color:#7bd3a0}
   .card.dark{background:var(--dark);border-color:#2a2743;color:#fff}
   .card.dark h3{color:#fff}
   .card.dark p{color:#b7b3c9}
@@ -154,6 +164,10 @@
     section{padding:62px 0}
     .badge{display:none}
   }
+
+  /* CTA state while the store listing does not exist yet */
+  .soon{cursor:default;opacity:.62;pointer-events:none}
+  a.btn.soon{background:var(--ink-3);color:#fff;border-color:transparent}
 </style>
 </head>
 <body>
@@ -166,7 +180,7 @@
       <a href="#workflow">How it works</a>
       <a href="#features">Features</a>
       <a href="#privacy">Privacy</a>
-      <a class="btn btn-primary" href="CHROME_WEB_STORE_URL">Add to Chrome</a>
+      <a class="btn btn-primary" data-cta data-live="Add to Chrome">Coming soon</a>
     </nav>
   </div>
 </header>
@@ -180,7 +194,7 @@
       <p class="sub">Capture any web page, automatically find the sensitive information on it,
          black it out in one click, and export a client-ready proof report.</p>
       <div class="cta">
-        <a class="btn btn-primary btn-lg" href="CHROME_WEB_STORE_URL">Add to Chrome — it's free</a>
+        <a class="btn btn-primary btn-lg" data-cta data-live="Add to Chrome — it's free">Coming soon</a>
         <a class="btn btn-ghost btn-lg" href="#features">See what it does</a>
       </div>
     </div>
@@ -264,16 +278,14 @@
       <div class="card feat">
         <div class="eyebrow">Pattern detection</div>
         <h3>Finds what you'd rather not publish</h3>
-        <p>Every capture is scanned for the formats that most often cause a leak, each one
-           rated so you can triage at a glance instead of reading the whole page again.</p>
+        <p>Every capture is scanned for the formats that most often cause a leak. Each hit is
+           rated, and the high-risk ones sort to the top so you can triage at a glance.</p>
         <div class="chips">
-          <span class="chip">Emails</span>
-          <span class="chip">Card numbers</span>
-          <span class="chip">Tax IDs</span>
-          <span class="chip">Phone numbers</span>
-          <span class="chip">API keys</span>
-          <span class="chip">Tokens</span>
-          <span class="chip">IP addresses</span>
+          <span class="chip hi">Emails</span><span class="chip hi">SSNs</span><span class="chip hi">Cards</span><span class="chip hi">API keys</span><span class="chip">Tokens</span><span class="chip">Phones</span><span class="chip">IPs</span><span class="chip">Amounts</span><span class="chip">Dates</span><span class="chip">Long IDs</span>
+        </div>
+        <div class="legend">
+          <span><i class="sw hi"></i>High risk — redacted first</span>
+          <span><i class="sw"></i>Detected — review before sharing</span>
         </div>
       </div>
 
@@ -381,10 +393,32 @@
   <div class="wrap">
     <a href="privacy.html">Privacy policy</a>
     <a href="https://github.com/generate-apps/captureproof/issues">Support</a>
-    <a href="CHROME_WEB_STORE_URL">Chrome Web Store</a>
+    <a data-cta data-live="Chrome Web Store">Chrome Web Store (soon)</a>
     <span class="sp">© 2026 CaptureProof Pro</span>
   </div>
 </footer>
+
+
+<script>
+  /* ============================================================
+     WHEN YOUR CHROME WEB STORE LISTING IS LIVE:
+     paste its URL between the quotes below. That is the ONLY edit
+     needed — every "Add to Chrome" button on every page updates.
+     Example: "https://chromewebstore.google.com/detail/abcd1234"
+     ============================================================ */
+  var STORE_URL = "";
+
+  document.querySelectorAll('[data-cta]').forEach(function (el) {
+    if (STORE_URL) {
+      el.setAttribute('href', STORE_URL);
+      if (el.dataset.live) el.textContent = el.dataset.live;
+      el.classList.remove('soon');
+    } else {
+      el.removeAttribute('href');      // no dead link while unpublished
+      el.classList.add('soon');
+    }
+  });
+</script>
 
 </body>
 </html>
