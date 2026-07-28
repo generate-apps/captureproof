@@ -98,6 +98,10 @@
     .doc{grid-template-columns:1fr;gap:20px}
     nav.toc{position:static;display:none}
   }
+
+  /* CTA state while the store listing does not exist yet */
+  .soon{cursor:default;opacity:.62;pointer-events:none}
+  a.btn.soon{background:var(--ink-3);color:#fff;border-color:transparent}
 </style>
 </head>
 <body>
@@ -109,7 +113,7 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="https://github.com/generate-apps/captureproof/issues">Support</a>
-      <a class="btn" href="CHROME_WEB_STORE_URL">Add to Chrome</a>
+      <a class="btn" data-cta data-live="Add to Chrome">Coming soon</a>
     </nav>
   </div>
 </header>
@@ -269,10 +273,32 @@
   <div class="wrap">
     <a href="index.html">Home</a>
     <a href="https://github.com/generate-apps/captureproof/issues">Support</a>
-    <a href="CHROME_WEB_STORE_URL">Chrome Web Store</a>
+    <a data-cta data-live="Chrome Web Store">Chrome Web Store (soon)</a>
     <span class="sp">© 2026 CaptureProof Pro</span>
   </div>
 </footer>
+
+
+<script>
+  /* ============================================================
+     WHEN YOUR CHROME WEB STORE LISTING IS LIVE:
+     paste its URL between the quotes below. That is the ONLY edit
+     needed — every "Add to Chrome" button on every page updates.
+     Example: "https://chromewebstore.google.com/detail/abcd1234"
+     ============================================================ */
+  var STORE_URL = "";
+
+  document.querySelectorAll('[data-cta]').forEach(function (el) {
+    if (STORE_URL) {
+      el.setAttribute('href', STORE_URL);
+      if (el.dataset.live) el.textContent = el.dataset.live;
+      el.classList.remove('soon');
+    } else {
+      el.removeAttribute('href');      // no dead link while unpublished
+      el.classList.add('soon');
+    }
+  });
+</script>
 
 </body>
 </html>
